@@ -1,10 +1,12 @@
 
 #include "utility.h"
+#include "Profiler.h"
 
 long long invalidIdTotal = 0;
 
 bool IsInvalidID(std::string _id)
 {
+    PROFILE_ME;
     // Any number of repeating groups so odds allowed
     // Max number of groups is the size of the id
 
@@ -15,28 +17,18 @@ bool IsInvalidID(std::string _id)
         if (_id.size() % groupSize > 0)
             continue;
 
-        // Now we need to create the check group and compare to the other groups
-        std::vector<std::string> compareGroups;
-
-        for (int i = 0; i < _id.size(); i += groupSize)
-        {
-            compareGroups.push_back(_id.substr(i, groupSize));
-        }
-
         // Check the compare groups if one of them isn't equal we can continue
         std::string initialComparison;
         bool notEqual = false;
-        for (int i = 0; i < compareGroups.size(); i++)
+        for (int i = 0; i < _id.size(); i += groupSize)
         {
             if (i == 0)
-                initialComparison = compareGroups[i];
-            else if (initialComparison != compareGroups[i])
+                initialComparison = _id.substr(i, groupSize);
+            else if (initialComparison != _id.substr(i, groupSize))
             {
                 notEqual = true;
-            }
-
-            if (notEqual)
                 break;
+            }
         }
 
         // Found an invalid ID
@@ -51,6 +43,8 @@ bool IsInvalidID(std::string _id)
 
 void ProcessIDRange(std::string _idRangeString)
 {
+    PROFILE_ME;
+
     std::string lowerBoundStr = "";
     std::string upperBoundStr = "";
 
@@ -91,6 +85,8 @@ void ProcessIDRange(std::string _idRangeString)
 
 int main()
 {
+    PROFILE_ME;
+
     std::string inputData = ReadInputDataFromFileAsString(".\\resources\\Day2Input.txt");
 
     std::string currentIDRange = "";
@@ -113,5 +109,7 @@ int main()
 
     std::cout << "Invalid total: " << invalidIdTotal << "\n";
 
+    PROFILE_END;
+    profiler::getInstance().print(std::cout, 60);
     system("pause");
 }
