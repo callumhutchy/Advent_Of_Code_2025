@@ -58,7 +58,7 @@ int main()
 {
 
     // Input data
-    std::vector<std::string> instructionInput = ReadInputDataFromFile(".\\resources\\Day1Input.txt");
+    std::vector<std::string> instructionInput = ReadInputDataFromFileAsVector(".\\resources\\Day1Input.txt");
 
     for (int i = 0; i < instructionInput.size(); i++)
     {
