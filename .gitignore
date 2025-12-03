@@ -1,4 +1,1 @@
-﻿resources/Day1Input.txt
-vcpkg_installed
-builds
-resources/Day2Input.txt
+﻿rust/Day1/target
