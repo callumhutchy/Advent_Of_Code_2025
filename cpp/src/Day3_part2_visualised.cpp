@@ -6,6 +6,9 @@
 #include <chrono>
 #include <thread>
 
+#define VISUALISATION 0
+#define TIMING 1
+
 long long totalJoltage = 0;
 
 int maxDepth = 12;
@@ -13,7 +16,9 @@ int searchGroupSize;
 
 int FindBiggest(std::string _bankSubset, int *biggestIndex)
 {
+#if TIMING
     PROFILE_ME;
+#endif
     int biggest = 0;
 
     for (int i = 0; i < searchGroupSize; i++)
@@ -29,12 +34,16 @@ int FindBiggest(std::string _bankSubset, int *biggestIndex)
 
 void SearchGroupMethod(std::string _bank)
 {
+#if TIMING
     PROFILE_ME;
+#endif
     int digitCount = 0;
     long long currentRunningTotal = 0;
     int offset = 0;
 
+#if VISUALISATION
     std::cout << _bank;
+#endif
 
     std::vector<int> chosenIndexes;
 
@@ -42,6 +51,7 @@ void SearchGroupMethod(std::string _bank)
     {
         std::string subset = _bank.substr(offset, searchGroupSize);
 
+#if VISUALISATION
         std::cout << "\r";
         for (int i = 0; i < _bank.size(); i++)
         {
@@ -69,6 +79,7 @@ void SearchGroupMethod(std::string _bank)
                 std::cout << _bank[i];
             }
         }
+#endif
 
         int biggestIndex;
         int biggest = FindBiggest(subset, &biggestIndex);
@@ -78,9 +89,13 @@ void SearchGroupMethod(std::string _bank)
 
         currentRunningTotal += ((biggest - 48) * pow(10, (maxDepth - (1 + digitCount))));
         digitCount++;
+
+#if VISUALISATION
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
+#endif
     }
 
+#if VISUALISATION
     std::cout << "\r\033[0m";
     for (int i = 0; i < _bank.size(); i++)
     {
@@ -98,21 +113,29 @@ void SearchGroupMethod(std::string _bank)
     }
 
     std::cout << "\033[0m\n\nSelected: " << currentRunningTotal << "\n\n\n";
+#endif
 
     totalJoltage += currentRunningTotal;
 }
 
 int main()
 {
+#if TIMING
     PROFILE_ME;
+#endif
+#if VISUALISATION
+    system("pause");
+
+    std::cout << "Legend:\n\033[44m  \033[0m Search Group | \033[32m#\033[0m Selected Digits\n\n";
+#endif
 
     std::vector<std::string> inputData = ReadInputDataFromFileAsVector(".\\resources\\Day3Input.txt");
 
-    std::cout << "Legend:\n\033[41m  \033[0m Search Group | \033[32m#\033[0m Selected Digits\n\n";
-
     for (int i = 0; i < inputData.size(); i++)
     {
+#if VISUALISATION
         std::cout << "Input:\t" << inputData[i] << "\n\n";
+#endif
         searchGroupSize = inputData[i].size() - maxDepth;
         searchGroupSize++;
         SearchGroupMethod(inputData[i]);
@@ -120,7 +143,10 @@ int main()
 
     std::cout << "Total joltage: " << totalJoltage << "\n";
 
+#if TIMING
     PROFILE_END;
     profiler::getInstance().print(std::cout, 60);
+#endif
+
     system("pause");
 }
